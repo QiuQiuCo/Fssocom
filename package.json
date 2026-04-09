@@ -39,7 +39,9 @@
     ],
     "win": {
       "icon": "public/icon.ico",
-      "artifactName": "Fssocom Setup ${version}.exe",
+      "artifactName": "Fssocom Installer.exe",
+      "certificateFile": "../../fssocom-dev.pfx",
+      "certificatePassword": "FssoCert2024!",
       "target": [
         {
           "target": "nsis",
