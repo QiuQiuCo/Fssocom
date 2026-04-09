@@ -5,14 +5,12 @@ const fs = require('fs');
 
 const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
 
-// Auto-updater configuration for private GitHub repo
+// Auto-updater configuration
 if (!isDev) {
   autoUpdater.setFeedURL({
     provider: 'github',
     owner: 'QiuQiuCo',
-    repo: 'Fssocom',
-    private: true,
-    token: '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'
+    repo: 'Fssocom'
   });
 
   autoUpdater.checkForUpdatesAndNotify();
