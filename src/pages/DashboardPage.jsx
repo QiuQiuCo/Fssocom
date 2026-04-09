@@ -49,7 +49,7 @@ export default function DashboardPage({ user }) {
       {/* Header */}
       <div>
         <h1 className="text-xl font-bold text-slate-800">Dashboard</h1>
-        <p className="text-slate-500 text-sm mt-0.5">Welcome back, <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent font-semibold">{user.username}</span></p>
+        <p className="text-slate-500 text-sm mt-0.5">Welcome back, <span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent font-semibold">{user.username}</span></p>
       </div>
 
       {/* Stats */}
@@ -150,7 +150,7 @@ export default function DashboardPage({ user }) {
 
       {/* Top Items Table */}
       <div className="bg-white/80 backdrop-blur-xl border border-white/30 rounded-2xl overflow-hidden shadow-lg">
-        <div className="px-5 py-4 border-b border-slate-200 bg-gradient-to-r from-indigo-50 to-purple-50">
+        <div className="px-5 py-4 border-b border-slate-200 bg-gradient-to-r from-emerald-50 to-teal-50">
           <h2 className="font-semibold text-slate-800 text-sm">Inventory Overview</h2>
         </div>
         <div className="overflow-x-auto">
@@ -167,11 +167,11 @@ export default function DashboardPage({ user }) {
             </thead>
             <tbody>
               {inventory.slice(0, 8).map((item, idx) => (
-                <tr key={item.id} className="border-b border-slate-200/50 hover:bg-indigo-50/30 transition-colors">
+                <tr key={item.id} className="border-b border-slate-200/50 hover:bg-emerald-50/30 transition-colors">
                   <td className="px-5 py-3 font-medium text-slate-800">{item.name}</td>
                   <td className="px-5 py-3 text-slate-600 font-mono text-xs">{item.sku}</td>
                   <td className="px-5 py-3">
-                    <span className="text-xs bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 px-2 py-1 rounded-md font-medium">{item.category || '—'}</span>
+                    <span className="text-xs bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-700 px-2 py-1 rounded-md font-medium">{item.category || '—'}</span>
                   </td>
                   <td className="px-5 py-3 text-right">
                     <span className={`font-semibold ${item.quantity <= item.min_quantity && item.min_quantity > 0 ? 'text-amber-600' : 'text-slate-800'}`}>

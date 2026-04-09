@@ -139,7 +139,7 @@ export default function BarcodePage({ onToast }) {
       <div className="px-8 py-6 border-b border-gray-200/50 shrink-0 glass">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
               Barcode Management
             </h1>
             <p className="text-sm text-gray-600 mt-1">Print labels and lookup items by barcode</p>
@@ -152,7 +152,7 @@ export default function BarcodePage({ onToast }) {
             onClick={() => setTab('print')}
             className={`px-6 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 ${
               tab === 'print'
-                ? 'gradient-primary text-white shadow-lg shadow-indigo-500/30'
+                ? 'gradient-primary text-white shadow-lg shadow-emerald-500/30'
                 : 'bg-white/60 text-gray-600 hover:bg-white hover:text-gray-900'
             }`}
           >
@@ -168,7 +168,7 @@ export default function BarcodePage({ onToast }) {
             onClick={() => setTab('scan')}
             className={`px-6 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 ${
               tab === 'scan'
-                ? 'gradient-primary text-white shadow-lg shadow-indigo-500/30'
+                ? 'gradient-primary text-white shadow-lg shadow-emerald-500/30'
                 : 'bg-white/60 text-gray-600 hover:bg-white hover:text-gray-900'
             }`}
           >
@@ -195,7 +195,7 @@ export default function BarcodePage({ onToast }) {
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                   placeholder="Search by name or SKU..."
-                  className="w-full px-4 py-3 bg-white/80 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4"
+                  className="w-full px-4 py-3 bg-white/80 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 mb-4"
                 />
                 <div className="space-y-2 max-h-96 overflow-y-auto pr-2">
                   {filtered.map(item => (
@@ -232,7 +232,7 @@ export default function BarcodePage({ onToast }) {
                       max="100"
                       value={copies}
                       onChange={e => setCopies(Math.max(1, parseInt(e.target.value) || 1))}
-                      className="w-full px-4 py-3 bg-white/80 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="w-full px-4 py-3 bg-white/80 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     />
                   </div>
 
@@ -309,7 +309,7 @@ export default function BarcodePage({ onToast }) {
                     onKeyDown={e => e.key === 'Enter' && handleLookup()}
                     placeholder="Scan barcode or enter manually..."
                     autoFocus
-                    className="flex-1 px-4 py-4 bg-white/80 border-2 border-gray-300 rounded-xl text-base text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent font-mono"
+                    className="flex-1 px-4 py-4 bg-white/80 border-2 border-gray-300 rounded-xl text-base text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent font-mono"
                   />
                   <button
                     onClick={handleLookup}

@@ -5,7 +5,7 @@ function Modal({ title, onClose, children }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-fade-in">
       <div className="bg-white/95 backdrop-blur-xl border border-white/40 rounded-2xl shadow-2xl w-full max-w-md mx-4">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-gradient-to-r from-indigo-50 to-purple-50">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-gradient-to-r from-emerald-50 to-teal-50">
           <h2 className="font-semibold text-slate-800">{title}</h2>
           <button onClick={onClose} className="text-slate-500 hover:text-slate-800 transition-colors">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -75,7 +75,7 @@ export default function UsersPage({ user, onToast }) {
         </div>
         <button
           onClick={() => { setForm({ username: '', password: '', role: 'staff' }); setModal('create') }}
-          className="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-all shadow-lg"
+          className="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-all shadow-lg"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           Add User
@@ -91,7 +91,7 @@ export default function UsersPage({ user, onToast }) {
         <div className="bg-white/80 backdrop-blur-xl border border-white/30 rounded-2xl overflow-hidden shadow-lg">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-200 bg-gradient-to-r from-indigo-50 to-purple-50">
+              <tr className="border-b border-slate-200 bg-gradient-to-r from-emerald-50 to-teal-50">
                 <th className="text-left px-5 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider">User</th>
                 <th className="text-left px-5 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider">Role</th>
                 <th className="text-right px-5 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider">Created</th>
@@ -100,22 +100,22 @@ export default function UsersPage({ user, onToast }) {
             </thead>
             <tbody>
               {users.map(u => (
-                <tr key={u.id} className="border-b border-slate-200/50 hover:bg-indigo-50/30 transition-colors">
+                <tr key={u.id} className="border-b border-slate-200/50 hover:bg-emerald-50/30 transition-colors">
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold uppercase shrink-0 shadow-md">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-xs font-bold uppercase shrink-0 shadow-md">
                         {u.username[0]}
                       </div>
                       <div>
                         <p className="font-medium text-slate-800">{u.username}</p>
-                        {u.id === user.id && <p className="text-xs text-indigo-600 font-medium">You</p>}
+                        {u.id === user.id && <p className="text-xs text-emerald-600 font-medium">You</p>}
                       </div>
                     </div>
                   </td>
                   <td className="px-5 py-3">
                     <span className={`text-xs font-semibold px-2.5 py-1 rounded-lg border ${
                       u.role === 'admin'
-                        ? 'bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 border-indigo-200'
+                        ? 'bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-700 border-emerald-200'
                         : 'bg-slate-100 text-slate-700 border-slate-200'
                     }`}>
                       {u.role === 'admin' ? 'Administrator' : 'Staff'}
@@ -147,18 +147,18 @@ export default function UsersPage({ user, onToast }) {
               <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Username</label>
               <input value={form.username} onChange={e => setForm(p => ({ ...p, username: e.target.value }))}
                 placeholder="e.g. john_doe"
-                className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2.5 text-slate-800 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" />
+                className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2.5 text-slate-800 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all" />
             </div>
             <div>
               <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Password</label>
               <input type="password" value={form.password} onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
                 placeholder="Set a password"
-                className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2.5 text-slate-800 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" />
+                className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2.5 text-slate-800 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all" />
             </div>
             <div>
               <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">Role</label>
               <select value={form.role} onChange={e => setForm(p => ({ ...p, role: e.target.value }))}
-                className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2.5 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2.5 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all">
                 <option value="staff">Staff</option>
                 <option value="admin">Administrator</option>
               </select>
@@ -169,7 +169,7 @@ export default function UsersPage({ user, onToast }) {
               Cancel
             </button>
             <button onClick={handleCreate} disabled={saving}
-              className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold py-2.5 px-4 rounded-xl text-sm transition-all disabled:opacity-50 shadow-lg">
+              className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold py-2.5 px-4 rounded-xl text-sm transition-all disabled:opacity-50 shadow-lg">
               {saving ? 'Creating...' : 'Create User'}
             </button>
           </div>

@@ -29,7 +29,7 @@ export default function SettingsPage({ user, onToast }) {
     }
   }
 
-  const inputClass = "w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-800 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+  const inputClass = "w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-800 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
 
   return (
     <div className="p-6 space-y-6 max-w-2xl">
@@ -42,14 +42,14 @@ export default function SettingsPage({ user, onToast }) {
       <div className="bg-white/80 backdrop-blur-xl border border-white/30 rounded-2xl p-6 shadow-lg">
         <h2 className="font-semibold text-slate-800 mb-4">Account Info</h2>
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-2xl font-bold uppercase shadow-lg">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-2xl font-bold uppercase shadow-lg">
             {user.username[0]}
           </div>
           <div>
             <p className="text-slate-800 font-semibold text-lg">{user.username}</p>
             <span className={`text-xs font-semibold px-2.5 py-1 rounded-lg border ${
               user.role === 'admin'
-                ? 'bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 border-indigo-200'
+                ? 'bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-700 border-emerald-200'
                 : 'bg-slate-100 text-slate-700 border-slate-200'
             }`}>
               {user.role === 'admin' ? 'Administrator' : 'Staff'}
@@ -109,7 +109,7 @@ export default function SettingsPage({ user, onToast }) {
             )}
           </div>
           <button type="submit" disabled={saving}
-            className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold py-3 px-6 rounded-xl text-sm transition-all disabled:opacity-50 flex items-center gap-2 shadow-lg">
+            className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold py-3 px-6 rounded-xl text-sm transition-all disabled:opacity-50 flex items-center gap-2 shadow-lg">
             {saving ? (
               <><svg className="spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>Saving...</>
             ) : 'Update Password'}
@@ -123,11 +123,11 @@ export default function SettingsPage({ user, onToast }) {
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
             <span className="text-slate-500">Application</span>
-            <span className="text-slate-800 font-medium">InventoryPro</span>
+            <span className="text-slate-800 font-medium">Fssocom</span>
           </div>
           <div className="flex justify-between">
             <span className="text-slate-500">Version</span>
-            <span className="text-slate-800 font-medium">1.0.0</span>
+            <span className="text-slate-800 font-medium">1.0.1</span>
           </div>
           <div className="flex justify-between">
             <span className="text-slate-500">Database</span>
