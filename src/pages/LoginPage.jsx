@@ -44,8 +44,8 @@ export default function LoginPage({ onLogin }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!username.trim() || !password.trim()) {
-      setError('Please enter username and password')
+    if (!username.trim()) {
+      setError('Please enter your username')
       return
     }
     setLoading(true)
@@ -202,7 +202,7 @@ export default function LoginPage({ onLogin }) {
                   onChange={e => setPassword(e.target.value)}
                   disabled={loading}
                   className="w-full px-4 py-3 bg-white/80 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed pr-11"
-                  placeholder="Enter your password"
+                  placeholder="Enter your password (leave blank on first login)"
                 />
                 <button
                   type="button"

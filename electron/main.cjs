@@ -256,9 +256,13 @@ ipcMain.handle('auth:login', async (event, { username, password }) => {
             return { success: false, error: 'Account expired. Please contact your administrator.' };
           }
 
-          // Verify password
-          const valid = bcrypt.compareSync(password, sbUser.password);
-          if (!valid) return { success: false, error: 'Invalid username or password' };
+          // Verify password — skip if this is a first-login account
+          // (must_change_password = true means no password has been set yet)
+          const mustChange = sbUser.must_change_password === true || sbUser.must_change_password === 1;
+          if (!mustChange) {
+            const valid = bcrypt.compareSync(password, sbUser.password);
+            if (!valid) return { success: false, error: 'Invalid username or password' };
+          }
 
           // Update local cache
           cacheUserLocally(sbUser);
@@ -269,7 +273,7 @@ ipcMain.handle('auth:login', async (event, { username, password }) => {
               id: sbUser.id,
               username: sbUser.username,
               role: sbUser.role,
-              mustChangePassword: sbUser.must_change_password === true || sbUser.must_change_password === 1,
+              mustChangePassword: mustChange,
             }
           };
         }
@@ -289,8 +293,11 @@ ipcMain.handle('auth:login', async (event, { username, password }) => {
       return { success: false, error: 'Account expired. Please contact your administrator.' };
     }
 
-    const valid = bcrypt.compareSync(password, localUser.password);
-    if (!valid) return { success: false, error: 'Invalid username or password' };
+    const mustChangeLocal = localUser.must_change_password === 1;
+    if (!mustChangeLocal) {
+      const valid = bcrypt.compareSync(password, localUser.password);
+      if (!valid) return { success: false, error: 'Invalid username or password' };
+    }
 
     return {
       success: true,
@@ -298,7 +305,7 @@ ipcMain.handle('auth:login', async (event, { username, password }) => {
         id: localUser.supabase_id || localUser.id,
         username: localUser.username,
         role: localUser.role,
-        mustChangePassword: localUser.must_change_password === 1,
+        mustChangePassword: mustChangeLocal,
       }
     };
   } catch (err) {
@@ -313,7 +320,6 @@ ipcMain.handle('auth:change-password', async (event, { userId, oldPassword, newP
     // Try Supabase first
     if (supabaseReady && supabase) {
       try {
-        // Fetch by supabase id or by local id fallback
         const { data: sbUsers, error } = await supabase
           .from('users')
           .select('*')
@@ -322,8 +328,13 @@ ipcMain.handle('auth:change-password', async (event, { userId, oldPassword, newP
 
         if (!error && sbUsers && sbUsers.length > 0) {
           const sbUser = sbUsers[0];
-          const valid = bcrypt.compareSync(oldPassword, sbUser.password);
-          if (!valid) return { success: false, error: 'Current password is incorrect' };
+          const isFirstLogin = sbUser.must_change_password === true || sbUser.must_change_password === 1;
+
+          // Only verify old password if this is NOT a first-login password set
+          if (!isFirstLogin) {
+            const valid = bcrypt.compareSync(oldPassword, sbUser.password);
+            if (!valid) return { success: false, error: 'Current password is incorrect' };
+          }
 
           await supabase
             .from('users')
@@ -345,8 +356,11 @@ ipcMain.handle('auth:change-password', async (event, { userId, oldPassword, newP
     // Local fallback
     const user = db.prepare('SELECT * FROM users WHERE id = ? OR supabase_id = ?').get(userId, userId);
     if (!user) return { success: false, error: 'User not found' };
-    const valid = bcrypt.compareSync(oldPassword, user.password);
-    if (!valid) return { success: false, error: 'Current password is incorrect' };
+    const isFirstLoginLocal = user.must_change_password === 1;
+    if (!isFirstLoginLocal) {
+      const valid = bcrypt.compareSync(oldPassword, user.password);
+      if (!valid) return { success: false, error: 'Current password is incorrect' };
+    }
     db.prepare('UPDATE users SET password = ?, must_change_password = 0 WHERE id = ?').run(hashed, user.id);
     return { success: true };
   } catch (err) {
