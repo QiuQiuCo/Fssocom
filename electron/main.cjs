@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const fs = require('fs');
+const bcrypt = require('bcryptjs');
 
 const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
 
@@ -70,6 +71,7 @@ function initDatabase() {
         username TEXT UNIQUE NOT NULL,
         password TEXT NOT NULL,
         role TEXT DEFAULT 'staff',
+        must_change_password INTEGER DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       );
 
@@ -103,10 +105,16 @@ function initDatabase() {
       );
     `);
 
-    // Seed default admin user (password: admin123)
+    // Add must_change_password column if it doesn't exist (for existing databases)
+    try {
+      db.exec(`ALTER TABLE users ADD COLUMN must_change_password INTEGER DEFAULT 0`);
+    } catch (e) { /* column already exists */ }
+
+    // Seed default admin user with hashed password, force password change on first login
     const existing = db.prepare('SELECT id FROM users WHERE username = ?').get('admin');
     if (!existing) {
-      db.prepare('INSERT INTO users (username, password, role) VALUES (?, ?, ?)').run('admin', 'admin123', 'admin');
+      const hashed = bcrypt.hashSync('admin123', 10);
+      db.prepare('INSERT INTO users (username, password, role, must_change_password) VALUES (?, ?, ?, ?)').run('admin', hashed, 'admin', 1);
     }
 
     // Seed sample data
@@ -132,11 +140,11 @@ function initDatabase() {
 // IPC Handlers
 ipcMain.handle('auth:login', (event, { username, password }) => {
   try {
-    const user = db.prepare('SELECT * FROM users WHERE username = ? AND password = ?').get(username, password);
-    if (user) {
-      return { success: true, user: { id: user.id, username: user.username, role: user.role } };
-    }
-    return { success: false, error: 'Invalid username or password' };
+    const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
+    if (!user) return { success: false, error: 'Invalid username or password' };
+    const valid = bcrypt.compareSync(password, user.password);
+    if (!valid) return { success: false, error: 'Invalid username or password' };
+    return { success: true, user: { id: user.id, username: user.username, role: user.role, mustChangePassword: user.must_change_password === 1 } };
   } catch (err) {
     return { success: false, error: err.message };
   }
@@ -144,9 +152,12 @@ ipcMain.handle('auth:login', (event, { username, password }) => {
 
 ipcMain.handle('auth:change-password', (event, { userId, oldPassword, newPassword }) => {
   try {
-    const user = db.prepare('SELECT * FROM users WHERE id = ? AND password = ?').get(userId, oldPassword);
-    if (!user) return { success: false, error: 'Current password is incorrect' };
-    db.prepare('UPDATE users SET password = ? WHERE id = ?').run(newPassword, userId);
+    const user = db.prepare('SELECT * FROM users WHERE id = ?').get(userId);
+    if (!user) return { success: false, error: 'User not found' };
+    const valid = bcrypt.compareSync(oldPassword, user.password);
+    if (!valid) return { success: false, error: 'Current password is incorrect' };
+    const hashed = bcrypt.hashSync(newPassword, 10);
+    db.prepare('UPDATE users SET password = ?, must_change_password = 0 WHERE id = ?').run(hashed, userId);
     return { success: true };
   } catch (err) {
     return { success: false, error: err.message };
@@ -164,7 +175,8 @@ ipcMain.handle('users:list', () => {
 
 ipcMain.handle('users:create', (event, { username, password, role }) => {
   try {
-    db.prepare('INSERT INTO users (username, password, role) VALUES (?, ?, ?)').run(username, password, role);
+    const hashed = bcrypt.hashSync(password, 10);
+    db.prepare('INSERT INTO users (username, password, role, must_change_password) VALUES (?, ?, ?, ?)').run(username, hashed, role, 1);
     return { success: true };
   } catch (err) {
     return { success: false, error: err.message };

@@ -1,7 +1,7 @@
 {
   "name": "fssocom-inventory",
   "private": false,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Fssocom Inventory Management System with Barcode Scanning",
   "author": "Fssocom",
   "repository": {
@@ -81,6 +81,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.102.1",
     "@zxing/library": "^0.21.3",
+    "bcryptjs": "^2.4.3",
     "better-sqlite3": "^12.8.0",
     "electron-updater": "^6.8.3",
     "jsbarcode": "^3.12.3",
