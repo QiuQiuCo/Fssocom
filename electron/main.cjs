@@ -256,10 +256,12 @@ ipcMain.handle('auth:login', async (event, { username, password }) => {
             return { success: false, error: 'Account expired. Please contact your administrator.' };
           }
 
-          // Verify password — skip if this is a first-login account
-          // (must_change_password = true means no password has been set yet)
+          // Verify password — skip if:
+          //   (a) account is flagged must_change_password (first login), OR
+          //   (b) password field was left blank (user signalling first login)
           const mustChange = sbUser.must_change_password === true || sbUser.must_change_password === 1;
-          if (!mustChange) {
+          const passwordProvided = password && password.length > 0;
+          if (!mustChange && passwordProvided) {
             const valid = bcrypt.compareSync(password, sbUser.password);
             if (!valid) return { success: false, error: 'Invalid username or password' };
           }
@@ -267,13 +269,16 @@ ipcMain.handle('auth:login', async (event, { username, password }) => {
           // Update local cache
           cacheUserLocally(sbUser);
 
+          // If password was blank, treat as first-login regardless of DB flag
+          const effectiveMustChange = mustChange || !passwordProvided;
+
           return {
             success: true,
             user: {
               id: sbUser.id,
               username: sbUser.username,
               role: sbUser.role,
-              mustChangePassword: mustChange,
+              mustChangePassword: effectiveMustChange,
             }
           };
         }
@@ -294,7 +299,8 @@ ipcMain.handle('auth:login', async (event, { username, password }) => {
     }
 
     const mustChangeLocal = localUser.must_change_password === 1;
-    if (!mustChangeLocal) {
+    const passwordProvidedLocal = password && password.length > 0;
+    if (!mustChangeLocal && passwordProvidedLocal) {
       const valid = bcrypt.compareSync(password, localUser.password);
       if (!valid) return { success: false, error: 'Invalid username or password' };
     }
@@ -305,7 +311,7 @@ ipcMain.handle('auth:login', async (event, { username, password }) => {
         id: localUser.supabase_id || localUser.id,
         username: localUser.username,
         role: localUser.role,
-        mustChangePassword: mustChangeLocal,
+        mustChangePassword: mustChangeLocal || !passwordProvidedLocal,
       }
     };
   } catch (err) {
