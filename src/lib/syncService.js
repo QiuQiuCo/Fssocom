@@ -19,7 +19,11 @@ export function getSyncState() {
   return syncState
 }
 
-// Push a single inventory item to Supabase (upsert by sku)
+// ---------------------------------------------------------------------------
+// Inventory sync
+// ---------------------------------------------------------------------------
+
+/** Push a single inventory item to Supabase (upsert by sku). */
 export async function pushItem(item) {
   if (!supabaseEnabled || !supabase) return
   try {
@@ -45,7 +49,7 @@ export async function pushItem(item) {
   }
 }
 
-// Delete an item from Supabase by sku
+/** Delete an item from Supabase by sku. */
 export async function deleteItem(sku) {
   if (!supabaseEnabled || !supabase) return
   try {
@@ -59,7 +63,7 @@ export async function deleteItem(sku) {
   }
 }
 
-// Push a transaction record to Supabase
+/** Push a transaction record to Supabase. */
 export async function pushTransaction(tx) {
   if (!supabaseEnabled || !supabase) return
   try {
@@ -78,8 +82,71 @@ export async function pushTransaction(tx) {
   }
 }
 
-// Full sync: pull from Supabase and merge into SQLite
-// Supabase wins if its updated_at is newer
+// ---------------------------------------------------------------------------
+// User sync (renderer-side helpers — used by UsersPage to keep Supabase in
+// sync when the main process call already handled the write, or for direct
+// renderer reads).
+// ---------------------------------------------------------------------------
+
+/**
+ * Fetch all users from Supabase (excluding password hashes for security).
+ * Returns [] if Supabase is not enabled or unreachable.
+ */
+export async function fetchUsers() {
+  if (!supabaseEnabled || !supabase) return []
+  try {
+    const { data, error } = await supabase
+      .from('users')
+      .select('id, username, role, must_change_password, expires_at, created_at')
+      .order('created_at', { ascending: false })
+    if (error) throw error
+    return data || []
+  } catch (err) {
+    console.error('[Sync] fetchUsers error:', err.message)
+    return []
+  }
+}
+
+/**
+ * Delete a user from Supabase by id.
+ * The main process `users:delete` IPC already does this — this export is
+ * available for any renderer-side direct calls.
+ */
+export async function deleteUser(id) {
+  if (!supabaseEnabled || !supabase) return
+  try {
+    const { error } = await supabase
+      .from('users')
+      .delete()
+      .eq('id', id)
+    if (error) throw error
+  } catch (err) {
+    console.error('[Sync] deleteUser error:', err.message)
+  }
+}
+
+/**
+ * Sync users: pull from Supabase and auto-delete any that are expired.
+ * Call this on app startup / after login.
+ */
+export async function syncUsers() {
+  if (!supabaseEnabled || !supabase) return
+  try {
+    // Trigger server-side cleanup of expired users
+    await supabase.rpc('delete_expired_users').catch(() => {})
+
+    // Optionally fetch updated list (callers can react if needed)
+    return await fetchUsers()
+  } catch (err) {
+    console.error('[Sync] syncUsers error:', err.message)
+    return []
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Full inventory sync: pull from Supabase and merge into SQLite
+// Supabase wins if its updated_at is newer.
+// ---------------------------------------------------------------------------
 export async function fullSync() {
   if (!supabaseEnabled || !supabase) return
   setState('syncing')
@@ -104,7 +171,6 @@ export async function fullSync() {
       const localTime = local ? new Date(local.updated_at || 0).getTime() : 0
 
       if (!local) {
-        // New item from cloud — insert into SQLite
         await window.api.createItem({
           name: remote.name,
           sku: remote.sku,
@@ -119,7 +185,6 @@ export async function fullSync() {
           description: remote.description || '',
         })
       } else if (remoteTime > localTime) {
-        // Cloud is newer — update SQLite
         await window.api.updateItem({
           id: local.id,
           name: remote.name,
@@ -137,7 +202,7 @@ export async function fullSync() {
       }
     }
 
-    // 4. Push any local items not in Supabase (local-only items go to cloud)
+    // 4. Push any local-only items to Supabase
     const remoteBySku = Object.fromEntries(remoteItems.map(i => [i.sku, i]))
     for (const local of localItems) {
       if (!remoteBySku[local.sku]) {

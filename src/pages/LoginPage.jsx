@@ -39,6 +39,8 @@ export default function LoginPage({ onLogin }) {
     }
   }
 
+  const isExpiredError = error.toLowerCase().includes('expired')
+
   const handlePasswordChange = async (e) => {
     e.preventDefault()
     if (!newPassword.trim()) { setError('Please enter a new password'); return }
@@ -199,11 +201,21 @@ export default function LoginPage({ onLogin }) {
             </div>
 
             {error && (
-              <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3 animate-scale-in">
-                <svg className="w-5 h-5 text-red-500 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-                </svg>
-                <p className="text-sm text-red-700 font-medium">{error}</p>
+              <div className={`px-4 py-3 rounded-xl flex items-start gap-3 animate-scale-in border ${
+                isExpiredError
+                  ? 'bg-amber-50 border-amber-200'
+                  : 'bg-red-50 border-red-200'
+              }`}>
+                {isExpiredError ? (
+                  <svg className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                ) : (
+                  <svg className="w-5 h-5 text-red-500 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                )}
+                <p className={`text-sm font-medium ${isExpiredError ? 'text-amber-700' : 'text-red-700'}`}>{error}</p>
               </div>
             )}
 

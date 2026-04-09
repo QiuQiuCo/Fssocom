@@ -23,6 +23,7 @@
     "appId": "com.fssocom.inventory",
     "productName": "Fssocom",
     "copyright": "Copyright 2026 Fssocom",
+    "afterSign": "electron/afterSign.cjs",
     "publish": {
       "provider": "github",
       "owner": "QiuQiuCo",
@@ -39,9 +40,6 @@
     ],
     "win": {
       "icon": "public/icon.ico",
-      "artifactName": "Fssocom Installer.exe",
-      "certificateFile": "../../fssocom-dev.pfx",
-      "certificatePassword": "FssoCert2024!",
       "target": [
         {
           "target": "nsis",
@@ -59,13 +57,18 @@
     },
     "nsis": {
       "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
       "allowToChangeInstallationDirectory": true,
       "installerIcon": "public/icon.ico",
       "uninstallerIcon": "public/icon.ico",
       "installerHeaderIcon": "public/icon.ico",
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Fssocom"
+      "shortcutName": "Fssocom",
+      "artifactName": "Fssocom Installer.exe",
+      "uninstallDisplayName": "Fssocom",
+      "deleteAppDataOnUninstall": false
     },
     "portable": {
       "artifactName": "Fssocom-Portable.exe"
