@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { api } from '../lib/api'
+import { supabase, supabaseEnabled } from '../lib/supabaseConfig'
 import fssocomLogo from '../assets/Fssocomlogo.png'
 
 export default function LoginPage({ onLogin }) {
@@ -8,6 +9,30 @@ export default function LoginPage({ onLogin }) {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [showPass, setShowPass] = useState(false)
+
+  // Server connectivity: 'checking' | 'connected' | 'offline' | 'not_configured'
+  const [serverStatus, setServerStatus] = useState(supabaseEnabled ? 'checking' : 'not_configured')
+
+  useEffect(() => {
+    if (!supabaseEnabled || !supabase) {
+      setServerStatus('not_configured')
+      return
+    }
+    let cancelled = false
+    async function checkConnection() {
+      try {
+        // Lightweight ping — just ask for 0 rows from the users table
+        const { error } = await supabase.from('users').select('id').limit(1)
+        if (cancelled) return
+        // A "relation does not exist" error still means the server is reachable
+        setServerStatus(error && error.code === 'PGRST116' ? 'offline' : 'connected')
+      } catch (_) {
+        if (!cancelled) setServerStatus('offline')
+      }
+    }
+    checkConnection()
+    return () => { cancelled = true }
+  }, [])
 
   // Force password change state
   const [mustChange, setMustChange] = useState(false)
@@ -242,10 +267,35 @@ export default function LoginPage({ onLogin }) {
           </form>
         </div>
 
-        {/* Version footer */}
-        <p className="text-center text-xs text-gray-400 mt-6">
-          Fssocom v1.0.1
-        </p>
+        {/* Version footer + server status */}
+        <div className="mt-6 flex flex-col items-center gap-2">
+          {/* Server status pill */}
+          {serverStatus === 'checking' && (
+            <div className="flex items-center gap-1.5 text-xs text-slate-400">
+              <div className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse" />
+              Checking server...
+            </div>
+          )}
+          {serverStatus === 'connected' && (
+            <div className="flex items-center gap-1.5 text-xs text-emerald-600 font-medium">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              Server connected
+            </div>
+          )}
+          {serverStatus === 'offline' && (
+            <div className="flex items-center gap-1.5 text-xs text-amber-600 font-medium">
+              <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+              Server unreachable — offline mode
+            </div>
+          )}
+          {serverStatus === 'not_configured' && (
+            <div className="flex items-center gap-1.5 text-xs text-slate-400">
+              <div className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+              Local only
+            </div>
+          )}
+          <p className="text-xs text-gray-400">Fssocom v1.0.1</p>
+        </div>
       </div>
     </div>
   )
