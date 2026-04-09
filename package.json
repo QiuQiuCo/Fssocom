@@ -6,7 +6,7 @@
   "author": "Fssocom",
   "repository": {
     "type": "git",
-    "url": "https://github.com/YOUR_USERNAME/fssocom-inventory.git"
+    "url": "https://github.com/QiuQiuCo/Fssocom.git"
   },
   "main": "electron/main.cjs",
   "scripts": {
@@ -25,18 +25,21 @@
     "copyright": "Copyright 2026 Fssocom",
     "publish": {
       "provider": "github",
-      "owner": "YOUR_USERNAME",
-      "repo": "fssocom-inventory"
+      "owner": "QiuQiuCo",
+      "repo": "Fssocom"
     },
     "directories": {
       "output": "dist-electron"
     },
+    "icon": "public/icon.ico",
     "files": [
       "dist/**/*",
       "electron/**/*",
       "node_modules/**/*"
     ],
     "win": {
+      "icon": "public/icon.ico",
+      "artifactName": "Fssocom Setup ${version}.exe",
       "target": [
         {
           "target": "nsis",
@@ -57,10 +60,12 @@
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "installerIcon": null,
-      "uninstallerIcon": null,
+      "installerIcon": "public/icon.ico",
+      "uninstallerIcon": "public/icon.ico",
+      "installerHeaderIcon": "public/icon.ico",
       "createDesktopShortcut": true,
-      "createStartMenuShortcut": true
+      "createStartMenuShortcut": true,
+      "shortcutName": "Fssocom"
     },
     "portable": {
       "artifactName": "Fssocom-Portable.exe"
