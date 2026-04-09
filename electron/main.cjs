@@ -5,8 +5,16 @@ const fs = require('fs');
 
 const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
 
-// Auto-updater configuration
+// Auto-updater configuration for private GitHub repo
 if (!isDev) {
+  autoUpdater.setFeedURL({
+    provider: 'github',
+    owner: 'QiuQiuCo',
+    repo: 'Fssocom',
+    private: true,
+    token: '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'
+  });
+
   autoUpdater.checkForUpdatesAndNotify();
   
   autoUpdater.on('update-available', () => {
@@ -28,6 +36,10 @@ if (!isDev) {
         autoUpdater.quitAndInstall();
       }
     });
+  });
+
+  autoUpdater.on('error', (err) => {
+    console.error('Auto-updater error:', err);
   });
 }
 
