@@ -1,0 +1,111 @@
+{
+  "name": "fssocom-inventory",
+  "private": false,
+  "version": "1.0.0",
+  "description": "Fssocom Inventory Management System with Barcode Scanning",
+  "author": "Fssocom",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR_USERNAME/inventory-app.git"
+  },
+  "main": "electron/main.cjs",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "electron:dev": "concurrently \"cross-env BROWSER=none vite\" \"wait-on http://localhost:5173 && electron .\"",
+    "electron:build": "vite build && electron-builder build --win",
+    "release": "vite build && electron-builder build --win --publish always",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "rebuild": "electron-rebuild -f -w better-sqlite3"
+  },
+  "build": {
+    "appId": "com.fssocom.inventory",
+    "productName": "Fssocom",
+    "copyright": "Copyright 2026 Fssocom",
+    "publish": {
+      "provider": "github",
+      "owner": "YOUR_USERNAME",
+      "repo": "inventory-app"
+    },
+    "directories": {
+      "output": "dist-electron"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "node_modules/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "signAndEditExecutable": false,
+      "signtoolOptions": {
+        "certificateFile": "C:\\Users\\qiuen\\AppData\\Local\\Temp\\Fssocom-CodeSign.pfx",
+        "certificatePassword": "Fssocom2026"
+      }
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": null,
+      "uninstallerIcon": null,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "portable": {
+      "artifactName": "Fssocom-Portable.exe"
+    },
+    "extraResources": [
+      {
+        "from": "node_modules/better-sqlite3/build/Release/",
+        "to": "better-sqlite3/build/Release/",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.102.1",
+    "@zxing/library": "^0.21.3",
+    "better-sqlite3": "^12.8.0",
+    "electron-updater": "^6.8.3",
+    "jsbarcode": "^3.12.3",
+    "lucide-react": "^1.7.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-to-print": "^3.3.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.4",
+    "@tailwindcss/vite": "^4.2.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "concurrently": "^9.2.1",
+    "cross-env": "^10.1.0",
+    "electron": "^41.2.0",
+    "electron-builder": "^26.8.1",
+    "electron-rebuild": "^3.2.9",
+    "eslint": "^9.39.4",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.4.0",
+    "tailwindcss": "^4.2.2",
+    "vite": "^8.0.4",
+    "wait-on": "^9.0.4"
+  }
+}
