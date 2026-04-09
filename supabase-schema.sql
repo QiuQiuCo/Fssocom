@@ -140,12 +140,15 @@ create or replace trigger users_auto_delete_expired
 insert into users (username, password, role, must_change_password, expires_at)
 values (
   'admin',
-  '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', -- admin123
+  '$2b$10$zPqwLBgiemDJG1ysKfkrAe9l9QWStneGfRVx.PQPoFqM8txQkmHKO', -- admin123
   'admin',
   true,
   null
 )
-on conflict (username) do nothing;
+on conflict (username) do update
+  set password = excluded.password,
+      role = excluded.role,
+      must_change_password = excluded.must_change_password;
 
 -- -------------------------------------------------------------
 -- NOTE: The local SQLite database in the Electron app caches
