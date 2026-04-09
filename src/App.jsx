@@ -9,16 +9,32 @@ import BarcodePage from './pages/BarcodePage'
 import TransactionsPage from './pages/TransactionsPage'
 import UsersPage from './pages/UsersPage'
 import SettingsPage from './pages/SettingsPage'
+import { fullSync, onSyncStateChange, getSyncState, supabaseEnabled } from './lib/syncService'
+import { supabaseEnabled as sbEnabled } from './lib/supabaseConfig'
 
 function App() {
   const [user, setUser] = useState(null)
   const [page, setPage] = useState('dashboard')
   const [toast, setToast] = useState(null)
+  const [syncState, setSyncState] = useState(getSyncState())
+
+  // Subscribe to sync state changes
+  useEffect(() => {
+    const unsub = onSyncStateChange(setSyncState)
+    return unsub
+  }, [])
 
   useEffect(() => {
     const saved = sessionStorage.getItem('inv_user')
     if (saved) setUser(JSON.parse(saved))
   }, [])
+
+  // Run full sync whenever user logs in
+  useEffect(() => {
+    if (user) {
+      fullSync()
+    }
+  }, [user])
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type })
@@ -60,7 +76,7 @@ function App() {
       <TitleBar showControls />
       <div className="flex-1 p-3 overflow-hidden">
         <div className="h-full bg-white rounded-2xl shadow-lg overflow-hidden flex">
-          <Sidebar user={user} page={page} onPage={setPage} onLogout={handleLogout} />
+          <Sidebar user={user} page={page} onPage={setPage} onLogout={handleLogout} syncState={syncState} />
           <main className="flex-1 overflow-auto bg-gray-50">
             <div className="animate-fade-in h-full">
               {pageComponents[page] || pageComponents.dashboard}

@@ -56,7 +56,35 @@ const adminItems = [
   },
 ]
 
-export default function Sidebar({ user, page, onPage, onLogout }) {
+function SyncBadge({ state }) {
+  if (state === 'offline') return (
+    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-gray-700 text-gray-400 text-xs">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55M5 12.55a10.94 10.94 0 0 1 5.17-2.39M10.71 5.05A16 16 0 0 1 22.56 9M1.42 9a15.91 15.91 0 0 1 4.7-2.88M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/></svg>
+      Sync: Local only
+    </div>
+  )
+  if (state === 'syncing') return (
+    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-gray-700 text-teal-400 text-xs">
+      <svg className="spin" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+      Syncing...
+    </div>
+  )
+  if (state === 'synced') return (
+    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-gray-700 text-emerald-400 text-xs">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      Cloud synced
+    </div>
+  )
+  if (state === 'error') return (
+    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-gray-700 text-amber-400 text-xs">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Sync error
+    </div>
+  )
+  return null
+}
+
+export default function Sidebar({ user, page, onPage, onLogout, syncState = 'offline' }) {
   return (
     <div className="w-56 bg-gray-800 flex flex-col shrink-0">
       {/* Logo */}
@@ -135,6 +163,11 @@ export default function Sidebar({ user, page, onPage, onLogout }) {
           </div>
         </div>
       </nav>
+
+      {/* Sync Status */}
+      <div className="px-3 pb-2">
+        <SyncBadge state={syncState} />
+      </div>
 
       {/* User Profile */}
       <div className="border-t border-gray-700 p-3">

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { api } from '../lib/api'
+import { pushItem, deleteItem as syncDeleteItem, pushTransaction } from '../lib/syncService'
 
 const EMPTY_FORM = {
   name: '', sku: '', barcode: '', category: '', quantity: 0, min_quantity: 0,
@@ -161,6 +162,9 @@ export default function InventoryPage({ user, onToast }) {
       onToast(modal === 'add' ? 'Item added successfully' : 'Item updated successfully')
       setModal(null)
       loadItems()
+      // Push to Supabase in background (get fresh item with updated_at)
+      const fresh = modal === 'edit' ? { ...data } : { ...data, id: res.id }
+      pushItem(fresh)
     } else {
       onToast(res.error || 'Failed to save item', 'error')
     }
@@ -184,6 +188,16 @@ export default function InventoryPage({ user, onToast }) {
       onToast(`Stock updated. New quantity: ${res.newQuantity}`)
       setModal(null)
       loadItems()
+      // Push updated item + transaction to Supabase in background
+      const updatedItem = { ...selected, quantity: res.newQuantity }
+      pushItem(updatedItem)
+      pushTransaction({
+        item_name: selected.name,
+        type: stockForm.type,
+        quantity: parseInt(stockForm.quantity),
+        note: stockForm.note,
+        created_at: new Date().toISOString(),
+      })
     } else {
       onToast(res.error || 'Failed to adjust stock', 'error')
     }
@@ -197,6 +211,8 @@ export default function InventoryPage({ user, onToast }) {
       onToast('Item deleted')
       setModal(null)
       loadItems()
+      // Delete from Supabase in background
+      syncDeleteItem(selected.sku)
     } else {
       onToast(res.error || 'Failed to delete item', 'error')
     }
