@@ -53,9 +53,7 @@
             "x64"
           ]
         }
-      ],
-      "signAndEditExecutable": false,
-      "certificateFile": null
+      ]
     },
     "nsis": {
       "oneClick": false,
