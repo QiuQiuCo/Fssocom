@@ -1,4 +1,5 @@
 import { supabase, supabaseEnabled } from './supabaseConfig'
+export { supabaseEnabled }
 
 // Sync states: 'idle' | 'syncing' | 'synced' | 'error' | 'offline'
 let syncListeners = []

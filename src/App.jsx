@@ -10,7 +10,6 @@ import TransactionsPage from './pages/TransactionsPage'
 import UsersPage from './pages/UsersPage'
 import SettingsPage from './pages/SettingsPage'
 import { fullSync, onSyncStateChange, getSyncState, supabaseEnabled } from './lib/syncService'
-import { supabaseEnabled as sbEnabled } from './lib/supabaseConfig'
 
 function App() {
   const [user, setUser] = useState(null)
